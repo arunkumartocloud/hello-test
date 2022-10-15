@@ -1,24 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hello-test-app
-  namespace: default
+  name: hello-test-deploy
+  labels:
+    app: hello-test
 spec:
   replicas: 3
   selector:
     matchLabels:
       app: hello-test
-  strategy:
-    rollingUpdate:
-      maxSurge: 25%
-      maxUnavailable: 25%
-    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: hello-test
     spec:
       containers:
-      - image: arunkumartocloud/hello-test:hello-test
-        imagePullPolicy: Always
-        name: hello-test
- ---
+      - name: hello-test
+        image: arunkumartocloud/hello-test:hello-test
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -27,6 +26,7 @@ spec:
   type: NodePort
   ports:
     - port: 80
-      targetPort: 8080
+      targetPort: 80
+      nodePort: 30007
   selector:
     app: hello-test
